@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students List - Admin Panel</title>
+    <link rel="icon" href="img/bestlink.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --sidebar-bg: #1e2532;
+            --active-blue: #2563eb;
+            --bg-light: #f3f4f6;
+            --text-dark: #1f2937;
+            --text-gray: #6b7280;
+            --card-gold: #fbbf24;
+            --status-active: #10b981;
+            --status-dropped: #ef4444;
+            --status-graduated: #6366f1;
+            --status-leave: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: #9ca3af;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            flex-shrink: 0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            animation: fadeInPage 0.3s ease-out;
+        }
+
+        .brand {
+            padding: 0 20px 30px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .menu-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 10px 25px;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .menu-item {
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            text-decoration: none;
+            color: #9ca3af;
+        }
+
+        .menu-item:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item.active {
+            background-color: var(--active-blue);
+            color: white;
+            border-right: 4px solid var(--card-gold);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+            animation: fadeInPage 0.3s ease-out;
+        }
+
+        @keyframes fadeInPage {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .breadcrumbs {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-profile {
+            margin-left: auto;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--active-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            overflow: hidden;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 150px;
+            display: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* --- Table Styling --- */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f9fafb;
+            padding: 15px 20px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--text-gray);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th:last-child {
+            text-align: center;
+        }
+
+        td {
+            padding: 15px 20px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        tr:hover {
+            background-color: #fcfcfd;
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .student-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #e5e7eb;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .student-id {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-active {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .status-dropped {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .status-graduated {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+
+        .status-leave {
+            background: #fffbeb;
+            color: #d97706;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--active-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-gray);
+        }
+
+        .action-btn {
+            padding: 8px;
+            border-radius: 6px;
+            color: var(--text-gray);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #f3f4f6;
+            color: var(--active-blue);
+        }
+
+        .status-select {
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: white;
+            min-width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">
+            Student Information<br>Management<br>
+            <span id="admin-panel-indicator"
+                style="font-size: 0.8rem; opacity: 0.7; font-weight: 400; display: none;">Admin Panel</span>
+        </div>
+
+        <a href="Student Profile Reg.html" class="menu-item">
+            <i class="fa-solid fa-user-plus"></i> Student Profile<br>Registration
+        </a>
+        <a href="Student Profile Info Update.html" class="menu-item">
+            <i class="fa-solid fa-edit"></i> Update Personal<br>Information
+        </a>
+        <a href="Academic Records.html" class="menu-item">
+            <i class="fa-solid fa-file-alt"></i> Academic Records
+        </a>
+        <a href="Student Profile ID.html" class="menu-item">
+            <i class="fa-solid fa-id-card"></i> Student ID Generation
+        </a>
+        <a href="Student Status Tracking.html" class="menu-item">
+            <i class="fa-solid fa-chart-line"></i> Student Status Tracking
+        </a>
+
+        <div id="adminTools">
+            <div class="menu-category">Tools</div>
+            <div class="menu-item" id="sidebar-admin-toggle" onclick="handleUserAdmin()">
+                <i class="fa-solid fa-users"></i> User Admin
+            </div>
+            <a href="Student List.html" class="menu-item active admin-only" style="display: none;">
+                <i class="fa-solid fa-list-check"></i> Students List
+            </a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="breadcrumbs">
+            Admin / Tools / Students List
+
+            <div class="user-profile" id="userAvatarBtn">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="dropdown-item">Admin Profile</div>
+                    <div class="dropdown-item">Settings</div>
+                    <div class="dropdown-item" data-admin-toggle data-label="Switch User" onclick="handleUserAdmin()">
+                        Switch User</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-header">
+            <h1 class="page-title">Registered Students List</h1>
+        </div>
+
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" class="search-input" id="studentSearch" placeholder="Search by name or student ID...">
+        </div>
+
+        <div class="table-container">
+            <table id="studentsTable">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Student ID</th>
+                        <th>Program / Course</th>
+                        <th>Year Level</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="studentListBody">
+                    <!-- Loaded via JS -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Academic Records Modal -->
+    <div id="academicModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div
+            style="background: white; width: 90%; height: 90%; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; position: relative; animation: slideIn 0.3s ease-out; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
+            <button onclick="closeAcademicModal()" class="modal-close-btn">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <iframe id="academicFrame" style="width: 100%; height: 100%; border: none;" src=""></iframe>
+        </div>
+    </div>
+
+    <style>
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .modal-close-btn:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+            border-color: #d1d5db;
+        }
+    </style>
+    }
+    </style>
+
+    <script src="js/admin.js"></script>
+    <script src="js/db.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.StudentDB.init();
+            renderStudentList();
+
+            // Search logic
+            document.getElementById('studentSearch').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                renderStudentList(term);
+            });
+        });
+
+        function statusToClass(status) {
+            const map = { 'Active': 'status-active', 'On Leave': 'status-leave', 'Dropped': 'status-dropped', 'Graduated': 'status-graduated' };
+            return map[status] || 'status-active';
+        }
+
+        function renderStudentList(filter = '') {
+            const students = window.StudentDB.getAll();
+            const tableBody = document.getElementById('studentListBody');
+            tableBody.innerHTML = '';
+            const isAdmin = typeof checkAdminStatus === 'function' && checkAdminStatus();
+
+            const filtered = students.filter(s =>
+                s.fullName.toLowerCase().includes(filter) ||
+                s.id.toLowerCase().includes(filter)
+            );
+
+            if (filtered.length === 0) {
+                if (students.length === 0) {
+                    // No students at all - show registration prompt
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 60px; color: var(--text-gray);">
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                                    <i class="fa-solid fa-users" style="font-size: 4rem; color: #e5e7eb;"></i>
+                                    <h3 style="margin: 0; color: var(--text-dark);">No Students Registered</h3>
+                                    <p style="margin: 0; max-width: 500px; line-height: 1.5;">
+                                        Welcome to the Student Information Management System! 
+                                        To get started, you'll need to register your first student.
+                                    </p>
+                                    <a href="Student Profile Reg.html" class="menu-item" style="background: var(--active-blue); color: white; border: none; border-radius: 8px; padding: 12px 24px; text-decoration: none; margin-top: 10px; font-weight: 600;">
+                                        <i class="fa-solid fa-user-plus"></i> Register First Student
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    // Students exist but none match filter
+                    tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-gray);">No students found matching your search.</td></tr>';
+                }
+                return;
+            }
+
+            const statusOptions = ['Active', 'On Leave', 'Dropped', 'Graduated'];
+
+            filtered.forEach(student => {
+                const row = document.createElement('tr');
+                const currentStatus = student.status || 'Active';
+                const statusClass = statusToClass(currentStatus);
+                const photoUrl = student.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.fullName || '')}&background=random`;
+
+                const statusCell = isAdmin
+                    ? `<select class="status-select" onchange="changeStatus('${student.id}', this.value)">
+                        ${statusOptions.map(s => `<option value="${s}" ${s === currentStatus ? 'selected' : ''}>${s}</option>`).join('')}
+                       </select>`
+                    : `<span class="status-badge ${statusClass}">${currentStatus}</span>`;
+
+                const actions = [
+                    `<div class="action-btn" title="Edit Profile" onclick="viewStudent('${student.id}')"><i class="fa-solid fa-pen-to-square"></i></div>`
+                ];
+                if (isAdmin) {
+                    actions.push(`<div class="action-btn" title="Academic Records" onclick="viewAcademic('${student.id}')"><i class="fa-solid fa-file-lines"></i></div>`);
+                    actions.push(`<div class="action-btn" title="View ID" onclick="viewID('${student.id}')"><i class="fa-solid fa-id-card"></i></div>`);
+                }
+
+                row.innerHTML = `
+                    <td>
+                        <div class="student-info">
+                            <img src="${photoUrl}" class="student-photo">
+                            <div class="student-name">${student.fullName}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="student-id">
+                            #${student.id}
+                        </div>
+                    </td>
+                    <td>${student.program || 'N/A'}</td>
+                    <td>${student.yearLevel || 'N/A'}</td>
+                    <td>${statusCell}</td>
+                    <td>
+                        <div style="display: flex; gap: 5px; justify-content: center;">${actions.join('')}</div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function changeStatus(studentId, newStatus) {
+            window.StudentDB.update(studentId, { status: newStatus });
+            showSuccessPopup(`Status updated to: ${newStatus}`, () => {
+                renderStudentList(document.getElementById('studentSearch').value);
+            });
+        }
+
+        function viewStudent(id) {
+            window.StudentDB.setActive(id);
+            const modal = document.getElementById('academicModal');
+            const frame = document.getElementById('academicFrame');
+
+            frame.src = 'Student Profile Info Update.html?embed=true';
+            modal.style.display = 'flex';
+        }
+
+        function viewAcademic(id) {
+            window.StudentDB.setActive(id);
+            const modal = document.getElementById('academicModal');
+            const frame = document.getElementById('academicFrame');
+
+            frame.src = 'Academic Records.html?embed=true';
+            modal.style.display = 'flex';
+        }
+
+        function viewID(id) {
+            window.StudentDB.setActive(id);
+            const modal = document.getElementById('academicModal');
+            const frame = document.getElementById('academicFrame');
+
+            frame.src = 'Student Profile ID.html?embed=true';
+            modal.style.display = 'flex';
+        }
+
+        function closeAcademicModal() {
+            const modal = document.getElementById('academicModal');
+            const frame = document.getElementById('academicFrame');
+
+            modal.style.display = 'none';
+            frame.src = ''; // Clear src to stop execution/sound
+
+            // Refresh list in case grades/stats were updated
+            renderStudentList(document.getElementById('studentSearch').value);
+        }
+
+        // Close on outside click
+        document.getElementById('academicModal').addEventListener('click', (e) => {
+            if (e.target.id === 'academicModal') closeAcademicModal();
+        });
+    </script>
+</body>
+
+</html>

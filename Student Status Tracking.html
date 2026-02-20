@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Status Tracking</title>
+    <link rel="icon" href="img/bestlink.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --sidebar-bg: #1e2532;
+            --active-blue: #2563eb;
+            --bg-light: #f3f4f6;
+            --text-dark: #1f2937;
+            --text-gray: #6b7280;
+            --card-gold: #fbbf24;
+            --status-active: #10b981;
+            --status-dropped: #ef4444;
+            --status-graduated: #1e3a8a;
+            --status-leave: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: #9ca3af;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            flex-shrink: 0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            animation: fadeInPage 0.3s ease-out;
+        }
+
+        .brand {
+            padding: 0 20px 30px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .menu-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 10px 25px;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .menu-item {
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            text-decoration: none;
+            color: #9ca3af;
+        }
+
+        .menu-item:hover {
+            color: white;
+        }
+
+        .menu-item.active {
+            background-color: var(--active-blue);
+            color: white;
+            border-right: 4px solid var(--card-gold);
+        }
+
+        /* --- Main Content --- */
+        .breadcrumbs {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 0.85rem;
+            width: 100%;
+            color: var(--text-gray);
+        }
+
+        .support-btn {
+            background: white;
+            border: 1px solid #e5e7eb;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: 0.2s;
+            color: var(--text-dark);
+            text-decoration: none;
+        }
+
+        .support-btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .user-profile {
+            margin-left: auto;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--active-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            overflow: hidden;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Profile Dropdown Styles */
+        .profile-dropdown {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 150px;
+            display: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+            animation: fadeInPage 0.3s ease-out;
+        }
+
+        @keyframes fadeInPage {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Status Tracking Specifics --- */
+        .status-tracker-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            /* Padding removed here so the profile header touches the top */
+            padding: 0;
+            overflow: hidden;
+            max-width: 600px;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* --- New Profile Header Section (From Mockup) --- */
+        .profile-header {
+            padding: 30px 40px;
+            border-bottom: 2px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background-color: #fff;
+        }
+
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--text-dark);
+            background-color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Just a placeholder icon for the avatar */
+        .profile-avatar i {
+            font-size: 1.5rem;
+            color: var(--text-gray);
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .profile-text {
+            font-size: 1rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        /* --- Original Content Wrapper --- */
+        .tracker-body {
+            padding: 40px;
+            background-color: #f9fafb;
+            /* Slight contrast for the body */
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .header-icon {
+            font-size: 2rem;
+            color: #6366f1;
+            background: #e0e7ff;
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            /* Ensure white bg on the grey body */
+            border-bottom: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .status-option:first-child {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .status-option:last-of-type {
+            border-bottom: 1px solid #e5e7eb;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .status-option:hover {
+            background-color: #f0fdfa;
+            /* Very light teal hover */
+        }
+
+        .status-icon {
+            font-size: 1.2rem;
+            width: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .status-label {
+            font-weight: 500;
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+
+        .system-rules {
+            margin-top: 30px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+        }
+
+        .rules-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: start;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-bottom: 10px;
+        }
+
+        .check-icon {
+            color: #6366f1;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">
+            Student Information<br>Management<br>
+            <span id="admin-panel-indicator"
+                style="font-size: 0.8rem; opacity: 0.7; font-weight: 400; display: none;">Admin Panel</span>
+        </div>
+
+        <a href="Student Profile Reg.html" class="menu-item">
+            <i class="fa-solid fa-user-plus"></i> Student Profile<br>Registration
+        </a>
+        <a href="Student Profile Info Update.html" class="menu-item">
+            <i class="fa-solid fa-edit"></i> Update Personal<br>Information
+        </a>
+        <a href="Academic Records.html" class="menu-item">
+            <i class="fa-solid fa-file-alt"></i> Academic Records
+        </a>
+        <a href="Student Profile ID.html" class="menu-item">
+            <i class="fa-solid fa-id-card"></i> Student ID Generation
+        </a>
+        <a href="Student Status Tracking.html" class="menu-item active">
+            <i class="fa-solid fa-chart-line"></i> Student Status Tracking
+        </a>
+
+        <div id="adminTools">
+            <div class="menu-category">Tools</div>
+            <div class="menu-item" id="sidebar-admin-toggle" onclick="handleUserAdmin()">
+                <i class="fa-solid fa-users"></i> User Admin
+            </div>
+            <a href="Student List.html" class="menu-item admin-only" style="display: none;">
+                <i class="fa-solid fa-list-check"></i> Students List
+            </a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="breadcrumbs">
+            Registration / Student Status Tracking
+
+            <div class="user-profile" id="userAvatarBtn">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="dropdown-item">Profile</div>
+                    <div class="dropdown-item">Settings</div>
+                    <div class="dropdown-item" data-admin-toggle data-label="Support (Admin)"
+                        onclick="handleUserAdmin()">Support (Admin)</div>
+                </div>
+            </div>
+        </div>
+
+        <h1 class="page-title">Student Status Tracking</h1>
+        <p class="subtitle">Tracks student enrollment status.</p>
+
+        <div class="status-tracker-card">
+
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-text">Name: <strong>...</strong></div>
+                    <div class="profile-text">Student Status: <strong style="color: var(--status-active);">...</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tracker-body">
+                <div class="card-header">
+                    <div class="header-icon">
+                        <i class="fa-regular fa-file-lines"></i>
+                    </div>
+                    <div>
+                        <h2 class="page-title" style="font-size: 1.2rem; margin-bottom: 5px;">Student Status Tracking
+                        </h2>
+                        <div style="font-size: 0.9rem; color: var(--text-gray);">Tracks student enrollment status.</div>
+                    </div>
+                </div>
+
+                <div class="status-list">
+                    <div class="status-option" onclick="setStatus('Active')">
+                        <div class="status-icon" style="color: var(--status-active);"><i
+                                class="fa-solid fa-circle-check"></i></div>
+                        <div class="status-label">Active</div>
+                    </div>
+                    <div class="status-option" onclick="setStatus('Dropped')">
+                        <div class="status-icon" style="color: var(--status-dropped);"><i
+                                class="fa-solid fa-circle-info"></i></div>
+                        <div class="status-label">Dropped</div>
+                    </div>
+                    <div class="status-option" onclick="setStatus('Graduated')">
+                        <div class="status-icon" style="color: var(--status-graduated);"><i
+                                class="fa-solid fa-graduation-cap"></i></div>
+                        <div class="status-label">Graduated</div>
+                    </div>
+                    <div class="status-option" onclick="setStatus('On Leave')">
+                        <div class="status-icon" style="color: var(--status-leave);"><i
+                                class="fa-solid fa-circle-dot"></i>
+                        </div>
+                        <div class="status-label">On Leave</div>
+                    </div>
+                </div>
+
+                <div class="system-rules">
+                    <div class="rules-title">System Rules</div>
+                    <div class="rule-item">
+                        <i class="fa-solid fa-check check-icon"></i>
+                        Status affects enrollment eligibility
+                    </div>
+                    <div class="rule-item">
+                        <i class="fa-solid fa-check check-icon"></i>
+                        Changes logged with date & user
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="js/admin.js"></script>
+    <script src="js/db.js"></script>
+    <script>
+        let currentStudent = null;
+
+        // Status color mapping
+        const statusColors = {
+            'Active': 'var(--status-active)',
+            'Dropped': 'var(--status-dropped)',
+            'Graduated': 'var(--status-graduated)',
+            'On Leave': 'var(--status-leave)'
+        };
+
+        // Initialize and load student data
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize database
+            window.StudentDB.init();
+
+            // Check if database is empty
+            if (window.StudentDB.isEmpty()) {
+                loadUnregisteredState();
+                return;
+            }
+
+            // Load the active student and refetch from DB so status set on Student List is shown
+            const active = window.StudentDB.getActive();
+            if (!active) {
+                loadUnregisteredState();
+                return;
+            }
+            currentStudent = window.StudentDB.getById(active.id);
+
+            // Only set default status when student has none (do not overwrite status set by admin on Student List)
+            if (!currentStudent.status || currentStudent.status === '') {
+                currentStudent.status = 'Active';
+                window.StudentDB.update(currentStudent.id, { status: 'Active' });
+            }
+
+            // Load student data into UI
+            loadStudentData();
+
+            // Check admin permissions
+            const isAdmin = checkAdminStatus();
+            if (isAdmin) {
+                const dirLink = document.getElementById('adminDirLink');
+                if (dirLink) dirLink.style.display = 'block';
+            } else {
+                const options = document.querySelectorAll('.status-option');
+                options.forEach(opt => {
+                    opt.style.cursor = 'not-allowed';
+                    opt.style.opacity = '0.7';
+                    opt.title = "Only Admins can change status";
+                });
+                // Add a visual indicator
+                const sub = document.querySelector('.card-header div:last-child div');
+                if (sub) sub.innerHTML += ' <span style="font-size: 0.8rem; color: #ef4444;">(View Only)</span>';
+            }
+        });
+
+        function loadUnregisteredState() {
+            const nameElement = document.querySelector('.profile-info .profile-text:first-child strong');
+            const statusElement = document.querySelector('.profile-info .profile-text:last-child strong');
+            const avatar = document.querySelector('.profile-avatar');
+
+            if (nameElement) nameElement.textContent = "No Student Registered";
+            if (statusElement) {
+                statusElement.textContent = "Registration Required";
+                statusElement.style.color = "var(--text-gray)";
+            }
+            if (avatar) {
+                avatar.innerHTML = '<i class="fa-solid fa-user-plus"></i>';
+                avatar.style.borderColor = "var(--text-gray)";
+            }
+
+            // Disable all options visually and add registration prompt
+            document.querySelectorAll('.status-option').forEach(opt => {
+                opt.style.opacity = '0.5';
+                opt.style.pointerEvents = 'none';
+            });
+
+            // Add registration button
+            const cardBody = document.querySelector('.card-body');
+            if (cardBody) {
+                const registrationPrompt = document.createElement('div');
+                registrationPrompt.style.cssText = 'text-align: center; padding: 20px; margin-top: 20px; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe;';
+                registrationPrompt.innerHTML = `
+                    <p style="margin-bottom: 15px; color: var(--text-dark);">Please register a student first to track their status.</p>
+                    <a href="Student Profile Reg.html" class="menu-item" style="background: var(--active-blue); color: white; border: none; border-radius: 6px; padding: 10px 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-user-plus"></i> Register Student
+                    </a>
+                `;
+                cardBody.appendChild(registrationPrompt);
+            }
+        }
+
+        // Load student data from database
+        function loadStudentData() {
+            if (!currentStudent) return;
+
+            // Update profile header
+            const nameElement = document.querySelector('.profile-info .profile-text:first-child strong');
+            const statusElement = document.querySelector('.profile-info .profile-text:last-child strong');
+            const avatar = document.querySelector('.profile-avatar');
+
+            if (nameElement) {
+                nameElement.textContent = currentStudent.fullName;
+            }
+
+            if (statusElement) {
+                statusElement.textContent = currentStudent.status || 'Active';
+                statusElement.style.color = statusColors[currentStudent.status] || statusColors['Active'];
+            }
+
+            if (avatar && currentStudent.photoUrl) {
+                avatar.innerHTML = `<img src="${currentStudent.photoUrl}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                avatar.style.border = 'none';
+            }
+
+            // Highlight the current status option
+            highlightCurrentStatus();
+        }
+
+        // Highlight the currently active status
+        function highlightCurrentStatus() {
+            const options = document.querySelectorAll('.status-option');
+            options.forEach(opt => {
+                const label = opt.querySelector('.status-label').textContent;
+                if (label === currentStudent.status) {
+                    opt.style.backgroundColor = '#f0fdfa';
+                    opt.style.borderColor = '#14b8a6';
+                    opt.style.borderWidth = '2px';
+                } else {
+                    opt.style.backgroundColor = 'white';
+                    opt.style.borderColor = '#e5e7eb';
+                    opt.style.borderWidth = '1px';
+                }
+            });
+        }
+
+        // Set student status
+        function setStatus(status) {
+            if (!checkAdminStatus()) {
+                alert("Permission Denied: Only Admins can edit Student Status.");
+                return;
+            }
+
+            if (!currentStudent) {
+                alert('No student data loaded.');
+                return;
+            }
+
+            // Update database
+            const updated = window.StudentDB.update(currentStudent.id, { status: status });
+
+            if (updated) {
+                currentStudent.status = status;
+
+                // Show success popup and reload
+                showSuccessPopup(`Status updated to: ${status}`, () => {
+                    location.reload();
+                });
+            } else {
+                alert('Failed to update status. Please try again.');
+            }
+        }
+
+        // Profile Navigation
+        document.addEventListener('DOMContentLoaded', () => {
+            const cardHeader = document.querySelector('.card-header');
+            if (cardHeader) {
+                cardHeader.style.cursor = 'pointer';
+                cardHeader.addEventListener('click', function () {
+                    window.location.href = 'Student Profile Info Update.html';
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile Registration</title>
+    <link rel="icon" href="img/bestlink.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --sidebar-bg: #1e2532;
+            --active-blue: #2563eb;
+            --bg-light: #f3f4f6;
+            --text-dark: #1f2937;
+            --text-gray: #6b7280;
+            --card-gold: #fbbf24;
+            --alert-bg: #fff7ed;
+            --alert-text: #c2410c;
+            --alert-border: #fed7aa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: #9ca3af;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            flex-shrink: 0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            animation: fadeInPage 0.3s ease-out;
+        }
+
+        .form-input[readonly],
+        .form-input:disabled {
+            background-color: #e5e7eb;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+
+        .brand {
+            padding: 0 20px 30px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .menu-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 10px 25px;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .menu-item {
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            text-decoration: none;
+            color: #9ca3af;
+        }
+
+        .menu-item:hover {
+            color: white;
+        }
+
+        .menu-item.active {
+            background-color: var(--active-blue);
+            color: white;
+            border-right: 4px solid var(--card-gold);
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+            animation: fadeInPage 0.3s ease-out;
+        }
+
+        @keyframes fadeInPage {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .breadcrumbs {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 0.85rem;
+            width: 100%;
+            color: var(--text-gray);
+        }
+
+        .support-btn {
+            background: white;
+            border: 1px solid #e5e7eb;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: 0.2s;
+            color: var(--text-dark);
+            text-decoration: none;
+        }
+
+        .support-btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--active-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            overflow: hidden;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-gray);
+            margin-bottom: 30px;
+        }
+
+        /* --- Specific Page Styles --- */
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background-color: white;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            color: var(--text-dark);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--active-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn-footer {
+            display: flex;
+            justify-content: flex-end;
+            /* Right align for update page */
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--active-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: var(--text-dark);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+
+        .read-only-field {
+            background-color: #f3f4f6;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+
+        /* Profile Dropdown Styles */
+        .user-profile {
+            margin-left: auto;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 150px;
+            display: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        /* --- Signature Pad --- */
+        .signature-pad-container {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: white;
+            position: relative;
+            margin-top: 8px;
+        }
+
+        canvas#signaturePad {
+            width: 100%;
+            height: 120px;
+            cursor: crosshair;
+            display: block;
+        }
+
+        .sig-controls {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px;
+            gap: 10px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .btn-sig {
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid #e5e7eb;
+            background: white;
+        }
+
+        /* Custom File Upload Styles */
+        .custum-file-upload {
+            height: 200px;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #e8e8e8;
+            background-color: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0px 8px 25px -8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .custum-file-upload:hover {
+            border-color: var(--active-blue);
+            background-color: #eff6ff;
+            transform: translateY(-2px);
+            box-shadow: 0px 12px 35px -8px rgba(37, 99, 235, 0.2);
+        }
+
+        .custum-file-upload.has-image {
+            border-color: var(--success-green);
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .custum-file-upload .upload-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            transition: opacity 0.3s ease;
+        }
+
+        .custum-file-upload.has-image .upload-content {
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+        }
+
+        .custum-file-upload .icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custum-file-upload .icon svg {
+            height: 80px;
+            fill: #9ca3af;
+            transition: fill 0.3s ease;
+        }
+
+        .custum-file-upload:hover .icon svg {
+            fill: var(--active-blue);
+        }
+
+        .custum-file-upload .text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custum-file-upload .text span {
+            font-weight: 500;
+            color: #6b7280;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .custum-file-upload:hover .text span {
+            color: #2563eb;
+        }
+
+        .custum-file-upload input {
+            display: none;
+        }
+
+        .upload-preview {
+            width: 100%;
+            height: 100%;
+            display: none;
+            position: relative;
+        }
+
+        .custum-file-upload.has-image .upload-preview {
+            display: block;
+        }
+
+        .upload-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .custum-file-upload.has-image:hover .upload-overlay {
+            opacity: 1;
+        }
+
+        /* Custom Upload Button Styles */
+        .content__item {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .button {
+            pointer-events: auto;
+            cursor: pointer;
+            background: #e7e7e7;
+            border: none;
+            padding: 1.5rem 3rem;
+            margin: 0;
+            font-family: inherit;
+            font-size: inherit;
+            position: relative;
+            display: inline-block;
+        }
+
+        .button::before,
+        .button::after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .button--pan {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            border: 2px solid #fff;
+            border-radius: 3rem;
+            overflow: hidden;
+            color: #fff;
+            background: transparent;
+            padding: 0.8rem 1.5rem;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .button--pan span {
+            position: relative;
+            mix-blend-mode: difference;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .button--pan::before {
+            content: "";
+            background: #fff;
+            transition: transform 0.3s cubic-bezier(0.7, 0, 0.2, 1);
+        }
+
+        .button--pan:hover::before {
+            transform: translate3d(0, -100%, 0);
+        }
+
+        .upload-overlay .button--pan {
+            margin: 0;
+            padding: 0.8rem 1.5rem;
+            font-size: 0.8rem;
+        }
+
+        .photo-preview-container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">
+            Student Information<br>Management<br>
+            <span id="admin-panel-indicator"
+                style="font-size: 0.8rem; opacity: 0.7; font-weight: 400; display: none;">Admin Panel</span>
+        </div>
+
+        <a href="Student Profile Reg.html" class="menu-item active">
+            <i class="fa-solid fa-user-plus"></i> Student Profile<br>Registration
+        </a>
+        <a href="Student Profile Info Update.html" class="menu-item">
+            <i class="fa-solid fa-edit"></i> Update Personal<br>Information
+        </a>
+        <a href="Academic Records.html" class="menu-item">
+            <i class="fa-solid fa-file-alt"></i> Academic Records
+        </a>
+        <a href="Student Profile ID.html" class="menu-item">
+            <i class="fa-solid fa-id-card"></i> Student ID Generation
+        </a>
+        <a href="Student Status Tracking.html" class="menu-item">
+            <i class="fa-solid fa-chart-line"></i> Student Status Tracking
+        </a>
+
+        <div id="adminTools">
+            <div class="menu-category">Tools</div>
+            <div class="menu-item" id="sidebar-admin-toggle" onclick="handleUserAdmin()">
+                <i class="fa-solid fa-users"></i> User Admin
+            </div>
+            <a href="Student List.html" class="menu-item admin-only" style="display: none;">
+                <i class="fa-solid fa-list-check"></i> Students List
+            </a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="breadcrumbs">
+            Registration / Student Profile Registration
+
+            <div class="user-profile" id="userAvatarBtn">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="dropdown-item">Profile</div>
+                    <div class="dropdown-item">Settings</div>
+                    <div class="dropdown-item" data-admin-toggle data-label="Support (Admin)"
+                        onclick="handleUserAdmin()">Support (Admin)</div>
+                </div>
+            </div>
+        </div>
+
+        <h1 class="page-title">Student Profile Registration</h1>
+        <p class="subtitle" id="registration-subtitle">Register a new student to the system</p>
+
+        <!-- Welcome message for first-time users -->
+        <div id="welcome-message"
+            style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 20px; margin-bottom: 30px; display: none;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                <i class="fa-solid fa-graduation-cap" style="color: var(--active-blue); font-size: 1.5rem;"></i>
+                <h3 style="margin: 0; color: var(--active-blue);">Welcome to Student Information Management!</h3>
+            </div>
+            <p style="margin: 0; color: var(--text-dark); line-height: 1.5;">
+                To get started with the system, please register your first student below.
+                Once registered, you'll have access to all features including academic records, status tracking, and ID
+                generation.
+            </p>
+        </div>
+
+        <!-- Already registered message -->
+        <div id="already-registered-message"
+            style="background: #dcfce7; border: 1px solid #86efac; border-radius: 8px; padding: 20px; margin-bottom: 30px; display: none;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                <i class="fa-solid fa-circle-check" style="color: #16a34a; font-size: 1.5rem;"></i>
+                <h3 style="margin: 0; color: #16a34a;">Student Already Registered</h3>
+            </div>
+            <p style="margin: 0; color: var(--text-dark); line-height: 1.5;">
+                A student has already been registered in the system. To update student information, please use the
+                <a href="Student Profile Info Update.html" style="color: var(--active-blue); font-weight: 600;">Update
+                    Personal Information</a> page.
+            </p>
+        </div>
+
+        <form id="registrationForm">
+            <!-- Student Information Section -->
+            <div class="section-title">Student Information</div>
+
+            <div class="form-group">
+                <label class="form-label">Student ID <span style="font-size: 0.8rem; color: #9ca3af;">(Auto-generated on
+                        submit)</span></label>
+                <input type="text" class="form-input read-only-field" id="studentId"
+                    placeholder="Will be auto-generated" readonly>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Full Name <span style="color: #ef4444;">*</span></label>
+                <input type="text" class="form-input" id="fullName" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Birthdate <span style="color: #ef4444;">*</span></label>
+                <input type="date" class="form-input" id="birthdate" required>
+            </div>
+
+            <div class="grid-row">
+                <div class="form-group">
+                    <label class="form-label">Contact Number <span style="color: #ef4444;">*</span></label>
+                    <input type="tel" class="form-input" id="contactNumber" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email <span style="color: #ef4444;">*</span></label>
+                    <input type="email" class="form-input" id="email" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Address <span style="color: #ef4444;">*</span></label>
+                <input type="text" class="form-input" id="address" required>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+
+            <!-- Program Details Section -->
+            <div class="section-title">Program Details</div>
+
+            <div class="form-group">
+                <label class="form-label">Program / Course <span style="color: #ef4444;">*</span></label>
+                <select class="form-input" id="program">
+                    <option value="BS Computer Science">BS Computer Science</option>
+                    <option value="BS Information Technology">BS Information Technology</option>
+                    <option value="BS Information Systems">BS Information Systems</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Year Level <span style="color: #ef4444;">*</span></label>
+                <select class="form-input" id="yearLevel">
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Admission Date <span style="color: #ef4444;">*</span></label>
+                <input type="date" class="form-input" id="admissionDate" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Student Photo <span style="color: #ef4444;">*</span></label>
+                <div class="photo-preview-container">
+                    <div class="custum-file-upload" id="fileUploadArea"
+                        onclick="document.getElementById('studentPhoto').click()" style="cursor: pointer;">
+                        <div class="upload-content">
+                            <div class="icon">
+                                <svg viewBox="0 0 24 24" fill="" xmlns="http://www.w3.org/2000/svg">
+                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                    <g id="SVGRepo_iconCarrier">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z"
+                                            fill=""></path>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="text">
+                                <span style="
+                                    color: #9ca3af;
+                                    font-size: 0.9rem;
+                                    font-weight: 500;
+                                    transition: color 0.3s ease;
+                                ">Upload Photo</span>
+                            </div>
+                        </div>
+                        <div class="upload-preview" id="photoPreview">
+                            <img src="" id="previewImg" alt="Student Photo Preview">
+                            <div class="upload-overlay">
+                                <div class="content__item">
+                                    <button class="button button--pan" type="button"
+                                        onclick="document.getElementById('studentPhoto').click()">
+                                        <span><i class="fa-solid fa-camera"></i> Change Photo</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input id="studentPhoto" type="file" accept="image/*" style="display: none;">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Digital Signature <span style="color: #ef4444;">*</span></label>
+                <div class="signature-pad-container">
+                    <canvas id="signaturePad" height="120"></canvas>
+                    <div class="sig-controls">
+                        <button type="button" class="btn-sig" id="clearSig">Clear</button>
+                    </div>
+                </div>
+                <p style="font-size: 0.7rem; color: #9ca3af; margin-top: 5px;">Please draw your signature above.</p>
+            </div>
+
+            <div class="btn-footer">
+                <button type="submit" class="btn btn-primary">Register <i class="fa-solid fa-floppy-disk"
+                        style="font-size: 0.9rem;"></i></button>
+            </div>
+
+        </form>
+    </main>
+
+    <!-- Import our Simple Database -->
+    <script src="js/admin.js"></script>
+    <script src="js/db.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Initialize DB
+            window.StudentDB.init();
+
+            // If a student is already registered, disable the form
+            if (!window.StudentDB.isEmpty()) {
+                // Show already registered styled message
+                document.getElementById('already-registered-message').style.display = 'block';
+
+                // Disable the entire form
+                const form = document.getElementById('registrationForm');
+                form.style.opacity = '0.5';
+                form.style.pointerEvents = 'none';
+
+                // Hide welcome message
+                document.getElementById('welcome-message').style.display = 'none';
+                return;
+            }
+
+            // Check if this is first-time use (show welcome message)
+            document.getElementById('welcome-message').style.display = 'block';
+            document.getElementById('registration-subtitle').textContent = 'Register your first student to get started';
+
+            // Photo Preview Logic
+            const photoInput = document.getElementById('studentPhoto');
+            const preview = document.getElementById('photoPreview');
+            const previewImg = document.getElementById('previewImg');
+            const uploadArea = document.getElementById('fileUploadArea');
+            const uploadText = document.getElementById('uploadText');
+            let base64Photo = "";
+
+            photoInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        base64Photo = event.target.result;
+                        previewImg.src = base64Photo;
+                        uploadArea.classList.add('has-image');
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    uploadArea.classList.remove('has-image');
+                    base64Photo = "";
+                }
+            });
+
+            // Drag and drop functionality
+            uploadArea.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--active-blue)';
+                uploadArea.style.backgroundColor = '#eff6ff';
+            });
+
+            uploadArea.addEventListener('dragleave', function (e) {
+                e.preventDefault();
+                if (!uploadArea.classList.contains('has-image')) {
+                    uploadArea.style.borderColor = '#e8e8e8';
+                    uploadArea.style.backgroundColor = '#f8fafc';
+                }
+            });
+
+            uploadArea.addEventListener('drop', function (e) {
+                e.preventDefault();
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type.startsWith('image/')) {
+                    photoInput.files = files;
+                    photoInput.dispatchEvent(new Event('change'));
+                }
+                uploadArea.style.borderColor = '#e8e8e8';
+                uploadArea.style.backgroundColor = '#f8fafc';
+            });
+
+            // Signature Pad Logic
+            const canvas = document.getElementById('signaturePad');
+            const ctx = canvas.getContext('2d');
+            let drawing = false;
+            let signaturePresent = false;
+
+            // Adjust canvas width for current container size
+            function resizeCanvas() {
+                canvas.width = canvas.parentElement.clientWidth;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            // Drawing events
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: clientX - rect.left,
+                    y: clientY - rect.top
+                };
+            }
+
+            function startDraw(e) {
+                drawing = true;
+                signaturePresent = true;
+                const pos = getPos(e);
+                ctx.beginPath();
+                ctx.moveTo(pos.x, pos.y);
+                e.preventDefault();
+            }
+
+            function draw(e) {
+                if (!drawing) return;
+                const pos = getPos(e);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+                e.preventDefault();
+            }
+
+            function endDraw() {
+                drawing = false;
+            }
+
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            window.addEventListener('mouseup', endDraw);
+            canvas.addEventListener('touchstart', startDraw);
+            canvas.addEventListener('touchmove', draw);
+            window.addEventListener('touchend', endDraw);
+
+            document.getElementById('clearSig').addEventListener('click', () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                signaturePresent = false;
+            });
+
+            // 2. Handle Form Submit for NEW student registration
+            document.getElementById('registrationForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Validation Checks
+                if (!base64Photo) {
+                    alert("Please upload a student photo. This is required for ID generation.");
+                    return;
+                }
+                if (!signaturePresent) {
+                    alert("Please sign in the digital signature pad.");
+                    return;
+                }
+
+                const signatureUrl = canvas.toDataURL();
+
+                // Generate random validity date (1 year from now with random month and day)
+                // Generate random validity date (Random Month, Random Date, Year 2027)
+                function generateValidityDate() {
+                    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                    const now = new Date();
+                    const nextYear = 2027; // Fixed to 2027 as requested
+                    const randomMonthIdx = Math.floor(Math.random() * 12);
+                    const randomMonth = months[randomMonthIdx];
+
+                    // Get last day of the randomly selected month
+                    const lastDayOfMonth = new Date(nextYear, randomMonthIdx + 1, 0).getDate();
+                    const randomDay = Math.floor(Math.random() * lastDayOfMonth) + 1;
+
+                    return `${randomMonth} ${randomDay} ${nextYear}`;
+                }
+
+                // Create new student data object
+                const newStudentData = {
+                    fullName: document.getElementById('fullName').value,
+                    birthdate: document.getElementById('birthdate').value,
+                    contactNumber: document.getElementById('contactNumber').value,
+                    email: document.getElementById('email').value,
+                    address: document.getElementById('address').value,
+                    program: document.getElementById('program').value,
+                    yearLevel: document.getElementById('yearLevel').value,
+                    admissionDate: document.getElementById('admissionDate').value,
+                    photoUrl: base64Photo,
+                    signatureUrl: signatureUrl, // Save hand-drawn signature
+                    idValidity: generateValidityDate() // Save permanent validity date
+                };
+
+                // Add the new student to the database (ID will be auto-generated)
+                const newStudent = window.StudentDB.add(newStudentData);
+
+                // Visual feedback
+                // Show success modal
+                showSuccessModal(newStudent);
+
+                // Reload after delay
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            });
+        });
+
+        function showSuccessModal(student) {
+            const modalHTML = `
+                <div id="success-modal" style="
+                    position: fixed;
+                    top: 0; left: 0; right: 0; bottom: 0;
+                    background: rgba(0,0,0,0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9999;
+                    animation: fadeIn 0.3s ease-out;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 30px;
+                        border-radius: 12px;
+                        text-align: center;
+                        max-width: 400px;
+                        width: 90%;
+                        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+                        transform: scale(0.9);
+                        animation: scaleIn 0.3s ease-out forwards;
+                    ">
+                        <div style="
+                            width: 60px; height: 60px;
+                            background: #dcfce7;
+                            color: #16a34a;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto 20px;
+                            font-size: 30px;
+                        ">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <h2 style="color: #1f2937; margin-bottom: 10px;">Registered successfully!</h2>
+                        <p style="color: #6b7280; margin-bottom: 20px;">
+                            Student <strong>${student.fullName}</strong> has been added to the system.
+                        </p>
+                        <div style="font-size: 0.85rem; color: #9ca3af;">Reloading page...</div>
+                    </div>
+                </div>
+                <style>
+                    @keyframes scaleIn {
+                        to { transform: scale(1); }
+                    }
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                </style>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+    </script>
+</body>
+
+</html>
